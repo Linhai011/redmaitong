@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="红脉通 - 全国多机构红色数字资源协同共享平台，打破机构间资源壁垒，实现红色文化数字化资源互联互通">
+  <meta name="keywords" content="红色资源,数字资源,资源共享,党史,革命文物,档案馆,红色文化">
+  <meta property="og:title" content="红脉通 - 多机构红色数字资源协同共享平台">
+  <meta property="og:description" content="打通党史馆、革命纪念馆、地方档案馆、高校马院、文旅单位资源壁垒，实现红色文化数字化资源互联互通。">
+  <meta property="og:type" content="website">
+  <title>红脉通 - 多机构红色数字资源协同共享平台</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔴</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- ECharts 本地化（离线可用） -->
+  <script src="js/echarts.min.js"></script>
+</head>
+<body>
+
+<!-- Skip Link（无障碍） -->
+<a href="#main-content" class="skip-link" aria-label="跳转到主要内容">跳到主要内容</a>
+
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ========== 顶部公告 ========== -->
+<div class="top-notice">
+  <div class="top-wrap">
+    <div>红脉通——全国多机构红色数字资源协同共享公益平台</div>
+    <div><a href="#" data-page="apiDoc" class="js-nav-link">API接口文档入口</a></div>
+  </div>
+</div>
+
+<!-- ========== Header ========== -->
+<header>
+  <div class="nav-container">
+    <div class="logo-box">
+      <div class="logo-icon" aria-hidden="true">红</div>
+      <div class="logo-text">
+        <h1>红脉通</h1>
+        <p>红色资源共享</p>
+      </div>
+    </div>
+    <!-- 主导航 — 精简为 5 项 -->
+    <ul class="nav-main" role="navigation" aria-label="主导航">
+      <li><a href="#" data-page="home" class="active">首页</a></li>
+      <li><a href="#" data-page="resourceAll">全域资源库</a></li>
+      <li><a href="#" data-page="orgManage">机构协同中心</a></li>
+      <li><a href="#" data-page="resourceUpload">资源上传</a></li>
+      <li><a href="#" data-page="exhibitionJoint">联合展馆</a></li>
+    </ul>
+    <div class="header-right">
+      <button class="btn-org" id="btnOrgEntry" data-page="orgRegister" onclick="switchPage('orgRegister')">机构入驻</button>
+      <button class="btn-login" id="btnLogin" data-page="userLogin" onclick="switchPage('userLogin')">登录</button>
+      <!-- 登录后显示 -->
+      <div class="user-dropdown" id="userDropdown">
+        <button class="user-avatar-btn" id="userAvatarBtn" onclick="toggleUserMenu(event)" aria-label="用户菜单" aria-haspopup="true">张</button>
+        <div class="user-dropdown-menu" id="userDropdownMenu" role="menu">
+          <a href="#" data-page="userCenter" onclick="switchPage('userCenter');document.getElementById('userDropdownMenu').classList.remove('active')" role="menuitem">👤 个人中心</a>
+          <a href="#" data-page="dashboard" onclick="switchPage('dashboard');document.getElementById('userDropdownMenu').classList.remove('active')" role="menuitem">📊 数据统计</a>
+          <a href="#" data-page="shareAuth" onclick="switchPage('shareAuth');document.getElementById('userDropdownMenu').classList.remove('active')" role="menuitem">🔐 共享授权</a>
+          <a href="#" onclick="doLogout()" role="menuitem">退出登录</a>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- 移动端菜单 -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-nav" id="mobileNav" role="dialog" aria-modal="true" aria-label="移动端导航">
+  <div style="text-align:center;padding-bottom:16px;border-bottom:1px solid var(--border);">
+    <span style="font-size:20px;color:var(--main-red);font-weight:bold;letter-spacing:2px;">红脉通</span>
+  </div>
+  <div id="mobileNavBody"></div>
+</div>
+
+<!-- 面包屑 -->
+<div class="container" style="padding-bottom:0;">
+  <div class="breadcrumb" id="breadcrumb" style="display:none;" aria-label="面包屑导航"></div>
+</div>
+
+<!-- ====== 主内容区域 ====== -->
+<div id="main-content">
+
+<!-- ================================================================ -->
+<!-- 首页                                                            -->
+<!-- ================================================================ -->
+<div id="home" class="page active">
+  <section class="banner">
+    <div class="banner-particles"></div>
+    <div class="banner-content">
+      <h2>多机构协同共建 · 红色数字资源全域共享</h2>
+      <p>平台打通党史馆、革命纪念馆、地方档案馆、高校马院、文旅单位资源壁垒，统一元数据标准、跨机构检索、分级共享授权、联合数字展览、资源双向流转，实现红色文化数字化资源互联互通。</p>
+      <div class="banner-search">
+        <input id="bannerSearchInput" placeholder="跨机构检索党史文献、革命文物、影像音频..." aria-label="全站检索">
+        <button type="button">🔍 检索</button>
+      </div>
+      <div class="banner-buttons">
+        <button class="btn-big-gold" data-page="resourceAll" onclick="switchPage('resourceAll')">跨机构资源检索</button>
+        <button class="btn-big-white" data-page="orgRegister" onclick="switchPage('orgRegister')">申请机构协同入驻</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="section-title"><h2>入驻协同机构</h2><p>全国党史、文博、高校单位共建共享资源池</p></div>
+    <div class="org-wrap" id="homeOrgWrap">
+      <div class="org-card"><div class="org-avatar" aria-hidden="true">档</div><div class="org-name">省级档案馆</div><div class="org-type">档案类机构</div><div class="org-res-num">42,600<span>份资源</span></div></div>
+      <div class="org-card"><div class="org-avatar" aria-hidden="true">纪</div><div class="org-name">革命纪念馆</div><div class="org-type">文博场馆</div><div class="org-res-num">28,900<span>份资源</span></div></div>
+      <div class="org-card"><div class="org-avatar" aria-hidden="true">党</div><div class="org-name">地方党史研究室</div><div class="org-type">党史研究机构</div><div class="org-res-num">16,300<span>份资源</span></div></div>
+      <div class="org-card"><div class="org-avatar" aria-hidden="true">校</div><div class="org-name">高校马克思学院</div><div class="org-type">教研单位</div><div class="org-res-num">9,700<span>份资源</span></div></div>
+      <div class="org-card"><div class="org-avatar" aria-hidden="true">文</div><div class="org-name">文旅红色基地</div><div class="org-type">文旅单位</div><div class="org-res-num">12,100<span>份资源</span></div></div>
+    </div>
+  </div>
+
+  <div class="cate-wrap">
+    <div class="section-title"><h2>协同资源分类目录（统一元数据标准）</h2><p>全机构资源统一分类，跨库一键检索</p></div>
+    <div class="cate-grid">
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">📜</div><div class="cate-label">党史文献档案</div></div>
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">🖼️</div><div class="cate-label">革命文物3D/图像</div></div>
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">🎬</div><div class="cate-label">红色影像视频</div></div>
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">🎙️</div><div class="cate-label">口述历史音频</div></div>
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">📖</div><div class="cate-label">红色教研素材</div></div>
+      <div class="cate-item"><div class="cate-icon" aria-hidden="true">🏛️</div><div class="cate-label">旧址全景VR</div></div>
+    </div>
+  </div>
+
+  <section class="data-block">
+    <div class="container" style="padding:0;"><div class="data-grid">
+      <div class="data-item"><div class="data-num">126</div><div class="data-text">协同入驻机构</div></div><div class="data-divider"></div>
+      <div class="data-item"><div class="data-num">1,096,000+</div><div class="data-text">全域共享数字资源</div></div><div class="data-divider"></div>
+      <div class="data-item"><div class="data-num">32</div><div class="data-text">跨机构联合展馆</div></div><div class="data-divider"></div>
+      <div class="data-item"><div class="data-num">18,600+</div><div class="data-text">机构间资源互访次数</div></div><div class="data-divider"></div>
+      <div class="data-item"><div class="data-num">6类</div><div class="data-text">标准化API开放接口</div></div>
+    </div></div>
+  </section>
+
+  <div class="container">
+    <div class="section-title"><h2>跨机构热门共享资源</h2><p>多机构联合开放、可授权调取使用的红色数字藏品</p></div>
+    <div class="res-grid" id="homeHotRes">
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">省档案馆提供</span><span class="tag-type">文献档案</span></div><h4 class="res-title">建国初期地方报刊全套高清数字化档案</h4><p class="res-desc">多批次扫描归档，跨机构可申请全文下载授权。</p><div class="res-footer"><span>👁️ 13,620次</span><span class="share-level-auth">授权访问</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">革命纪念馆</span><span class="tag-type">3D文物</span></div><h4 class="res-title">长征时期红军生活器具三维数字资产库</h4><p class="res-desc">高精度三维扫描，支持其他机构引用至专题展览。</p><div class="res-footer"><span>👁️ 9,270次</span><span class="share-level-auth">授权访问</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">高校马院</span><span class="tag-type">教研素材</span></div><h4 class="res-title">党史教学成套课件与配套题库合集</h4><p class="res-desc">面向全部教育类机构无限制开放共享。</p><div class="res-footer"><span>👁️ 27,500次</span><span class="share-level-public">完全公开</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">党史研究室</span><span class="tag-type">口述音频</span></div><h4 class="res-title">解放战争老兵口述历史原声录音库</h4><p class="res-desc">配套文字转录稿，机构可申请商用研学授权。</p><div class="res-footer"><span>👁️ 6,840次</span><span class="share-level-auth">申请授权</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 全域资源库                                                       -->
+<!-- ================================================================ -->
+<div id="resourceAll" class="page">
+  <div class="container">
+    <div class="section-title"><h2>全域跨机构资源检索库</h2><p>一站式检索全部入驻机构上传资源</p></div>
+    <div class="filter-bar">
+      <div class="filter-row">
+        <label for="filterOrg">机构来源：</label><select id="filterOrg"><option>全部协同机构</option><option>档案馆类</option><option>革命纪念馆</option><option>高校马院</option><option>党史研究室</option></select>
+        <label for="filterType" style="margin-left:16px;">资源类型：</label><select id="filterType"><option>全部类型</option><option>文献档案</option><option>3D文物</option><option>视频影像</option><option>音频口述</option></select>
+        <label for="filterShare" style="margin-left:16px;">共享权限：</label><select id="filterShare"><option>全部共享等级</option><option>完全公开</option><option>机构授权访问</option><option>仅本机构内部</option></select>
+        <button class="btn-filter" onclick="filterResources()">筛选检索</button>
+        <button class="btn-filter-outline" onclick="clearFilter()">清除筛选</button>
+      </div>
+    </div>
+    <div class="res-grid" id="resourceAllGrid">
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">市党史研究室</span><span class="tag-type">文献</span></div><h4 class="res-title">地方革命斗争史史料汇编数字版</h4><p class="res-desc">全文字检索，其他机构可提交共享调取申请。</p><div class="res-footer"><span class="share-level-auth">授权访问</span><button class="btn-table btn-primary-sm" onclick="event.stopPropagation();openApplyModal()">申请调取</button></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">市革命纪念馆</span><span class="tag-type">影像</span></div><h4 class="res-title">本地革命旧址实拍修复纪录片合集</h4><p class="res-desc">完全开放，所有协同机构可直接下载引用。</p><div class="res-footer"><span class="share-level-public">完全公开</span><span>直接下载可用</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">省属档案馆</span><span class="tag-type">3D文物</span></div><h4 class="res-title">抗战时期军用物品三维数字模型集</h4><p class="res-desc">需提交机构使用授权后方可完整下载源文件。</p><div class="res-footer"><span class="share-level-auth">申请授权</span><button class="btn-table btn-primary-sm" onclick="event.stopPropagation();openApplyModal()">发起授权申请</button></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">高校马克思学院</span><span class="tag-type">教研素材</span></div><h4 class="res-title">红色主题班会全套教学资源包</h4><p class="res-desc">面向全部教育机构永久免费共享。</p><div class="res-footer"><span class="share-level-public">完全开放</span><span>批量打包下载</span></div></div></div>
+    </div>
+    <div class="pagination" id="paginationBox"><button class="page-btn" disabled>上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">4</button><button class="page-btn">5</button><button class="page-btn">下一页</button></div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 机构协同中心（含共享权限管理子tab）                                  -->
+<!-- ================================================================ -->
+<div id="orgManage" class="page">
+  <div class="container">
+    <div class="section-title"><h2>多机构协同管理中心</h2><p>管理入驻机构、机构审核、跨机构合作申请</p></div>
+    <div class="tabs">
+      <div class="tab-item active" onclick="switchTab(this)">机构列表</div>
+      <div class="tab-item" onclick="switchTab(this)">共享授权管理</div>
+    </div>
+    <div class="table-box">
+      <table>
+        <thead><tr><th scope="col">机构ID</th><th scope="col">机构名称</th><th scope="col">机构类型</th><th scope="col">入驻状态</th><th scope="col">资源总量</th><th scope="col">共享次数</th><th scope="col">操作</th></tr></thead>
+        <tbody id="orgTableBody">
+          <tr><td>ORG001</td><td><strong>XX省综合档案馆</strong></td><td><span class="badge-blue">档案机构</span></td><td><span class="status-badge status-approved">已认证入驻</span></td><td>42,600</td><td>13,200</td><td><button class="btn-table btn-primary-sm">查看详情</button><button class="btn-table btn-secondary-sm">协同记录</button></td></tr>
+          <tr><td>ORG028</td><td><strong>XX市革命历史纪念馆</strong></td><td><span class="badge-green">文博场馆</span></td><td><span class="status-badge status-approved">已认证入驻</span></td><td>28,900</td><td>9,600</td><td><button class="btn-table btn-primary-sm">查看详情</button><button class="btn-table btn-secondary-sm">协同记录</button></td></tr>
+          <tr><td>ORG112</td><td><strong>XX大学马克思主义学院</strong></td><td><span class="badge-yellow">高校教研</span></td><td><span class="status-badge status-pending">待管理员审核</span></td><td>0</td><td>0</td><td><button class="btn-table btn-success-sm">审核入驻资料</button></td></tr>
+          <tr><td>ORG056</td><td><strong>XX县党史研究室</strong></td><td><span class="badge-blue">党史研究</span></td><td><span class="status-badge status-approved">已认证入驻</span></td><td>16,300</td><td>5,200</td><td><button class="btn-table btn-primary-sm">查看详情</button><button class="btn-table btn-secondary-sm">协同记录</button></td></tr>
+          <tr><td>ORG078</td><td><strong>XX市文旅红色教育基地</strong></td><td><span class="badge-yellow">文旅基地</span></td><td><span class="status-badge status-approved">已认证入驻</span></td><td>12,100</td><td>6,800</td><td><button class="btn-table btn-primary-sm">查看详情</button><button class="btn-table btn-secondary-sm">协同记录</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 资源共享授权（独立页面，也可从用户菜单进入）                         -->
+<!-- ================================================================ -->
+<div id="shareAuth" class="page">
+  <div class="container">
+    <div class="section-title"><h2>跨机构资源共享授权管理</h2><p>处理资源调取申请、批量修改共享等级、授权记录查询</p></div>
+    <div class="tabs">
+      <div class="tab-item active" onclick="switchTab(this)">待审批申请</div>
+      <div class="tab-item" onclick="switchTab(this)">已处理记录</div>
+    </div>
+    <div class="table-box">
+      <table>
+        <thead><tr><th scope="col">申请ID</th><th scope="col">申请机构</th><th scope="col">目标资源</th><th scope="col">申请用途</th><th scope="col">状态</th><th scope="col">操作</th></tr></thead>
+        <tbody id="shareAuthTableBody">
+          <tr><td>AUTH2026070701</td><td><strong>XX大学马院</strong></td><td>长征文物3D模型合集</td><td>校内党史研学课程使用</td><td><span class="status-badge status-pending">待审批</span></td><td><button class="btn-table btn-success-sm">通过</button><button class="btn-table btn-danger-sm">驳回</button></td></tr>
+          <tr><td>AUTH2026070512</td><td><strong>XX县党史馆</strong></td><td>地方革命报刊档案</td><td>联合数字展馆制作</td><td><span class="status-badge status-approved">已通过</span></td><td><button class="btn-table btn-secondary-sm">查看记录</button></td></tr>
+          <tr><td>AUTH2026071015</td><td><strong>XX市文旅局</strong></td><td>抗战老兵口述音频库</td><td>红色旅游宣传制作</td><td><span class="status-badge status-pending">待审批</span></td><td><button class="btn-table btn-success-sm">通过</button><button class="btn-table btn-danger-sm">驳回</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 机构资源上传                                                     -->
+<!-- ================================================================ -->
+<div id="resourceUpload" class="page">
+  <div class="container">
+    <div class="section-title"><h2>机构资源标准化上传</h2><p>统一元数据字段，上传后自动进入全域共享资源池</p></div>
+    <form class="form-container" id="resourceUploadForm" onsubmit="handleResourceUpload(event)" novalidate>
+      <div class="form-two-col">
+        <div class="form-row"><label for="resTitle">资源标准标题<span style="color:var(--main-red);">*</span></label><input id="resTitle" required placeholder="遵循平台红色资源元数据命名规范"><span class="field-error">请输入资源标题</span></div>
+        <div class="form-row"><label for="resType">资源分类类目<span style="color:var(--main-red);">*</span></label><select id="resType" required><option value="">请选择分类</option><optgroup label="党史文献档案"><option value="7">报刊资料</option><option value="8">文献手稿</option><option value="9">档案卷宗</option></optgroup><optgroup label="革命文物3D/图像"><option value="10">3D模型</option><option value="11">文物图片</option><option value="12">旧址影像</option></optgroup><optgroup label="红色影像视频"><option value="13">纪录片</option><option value="14">电影</option><option value="15">宣讲视频</option></optgroup><optgroup label="口述历史音频"><option value="16">老兵口述</option><option value="17">访谈录音</option><option value="18">讲解音频</option></optgroup><optgroup label="红色教研素材"><option value="19">教学课件</option><option value="20">题库资料</option><option value="21">研学方案</option></optgroup><optgroup label="旧址全景VR"><option value="22">VR全景</option><option value="23">虚拟展厅</option></optgroup></select><span class="field-error">请选择资源分类</span></div>
+      </div>
+      <div class="form-row"><label for="resOrg">资源来源机构（自动填充）</label><input id="resOrg" value="XX市革命纪念馆" disabled></div>
+      <div class="form-row"><label for="resDesc">历史背景/资源简介<span style="color:var(--main-red);">*</span></label><textarea id="resDesc" required placeholder="标准化填写历史年代、人物、事件，用于跨机构检索匹配"></textarea><span class="field-error">请输入资源简介</span></div>
+      <div class="form-two-col">
+        <div class="form-row"><label for="resYear">资源年代标签</label><input id="resYear" placeholder="如：1930-1949"></div>
+        <div class="form-row"><label for="resShareLevel">跨机构共享权限等级<span style="color:var(--main-red);">*</span></label><select id="resShareLevel" required><option value="">请选择共享等级</option><option value="1">1级 完全公开</option><option value="2">2级 授权访问</option><option value="3">3级 仅本机构内部可见</option></select></div>
+      </div>
+      <div class="form-row"><label for="resFile">上传资源源文件（支持批量）</label><input id="resFile" type="file" multiple><div class="field-hint">支持PDF/MP4/MP3/GLB/JPG，元数据自动入库同步至协同API</div></div>
+      <div class="form-row"><label>版权共享授权协议<span style="color:var(--main-red);">*</span></label><div style="margin-top:10px;"><input type="checkbox" id="authCheck" style="width:18px;height:18px;"><label for="authCheck" style="font-weight:normal;color:var(--text-light);font-size:14px;margin-left:8px;">本机构拥有资源完整版权，同意按所选权限向协同入驻机构开放共享</label></div></div>
+      <button type="submit" class="submit-full">提交上传，同步至全域协同资源池</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 联合专题展馆                                                     -->
+<!-- ================================================================ -->
+<div id="exhibitionJoint" class="page">
+  <div class="container">
+    <div class="section-title"><h2>多机构联合数字专题展馆</h2><p>多家协同机构联合共建，资源互通组合沉浸式线上展览</p></div>
+    <div class="exhibition-grid" id="exhibitionGrid">
+      <div class="exhibition-card"><div class="exhibition-img"></div><div class="exhibition-info"><div class="res-tag-group"><span class="tag-org">3家机构联合</span></div><h4 class="res-title">长征之路跨区域联合VR展馆</h4><p class="res-desc">多省市纪念馆文物、史料联合展出，沉浸式VR体验。</p></div></div>
+      <div class="exhibition-card"><div class="exhibition-img"></div><div class="exhibition-info"><div class="res-tag-group"><span class="tag-org">档案馆+高校联合</span></div><h4 class="res-title">百年地方党史文献数字长卷展</h4><p class="res-desc">档案史料+教研解读素材协同整合，线上数字长卷展示。</p></div></div>
+      <div class="exhibition-card"><div class="exhibition-img"></div><div class="exhibition-info"><div class="res-tag-group"><span class="tag-org">5家红色基地联合</span></div><h4 class="res-title">英烈人物事迹全域联合陈列馆</h4><p class="res-desc">各地纪念馆英烈遗物、影像互通展出，致敬革命先烈。</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 数据统计仪表盘（ECharts 图表版）                                    -->
+<!-- ================================================================ -->
+<div id="dashboard" class="page">
+  <div class="container">
+    <div class="section-title"><h2>数据统计仪表盘</h2><p>平台运营数据、机构协同统计、资源共享分析</p></div>
+    <div class="dashboard-grid">
+      <div class="dash-card"><div class="dash-icon" aria-hidden="true">🏢</div><div class="dash-num">126</div><div class="dash-label">入驻协同机构总数</div></div>
+      <div class="dash-card"><div class="dash-icon" aria-hidden="true">📚</div><div class="dash-num">1,096,000+</div><div class="dash-label">全域共享资源总量</div></div>
+      <div class="dash-card"><div class="dash-icon" aria-hidden="true">👥</div><div class="dash-num">520万+</div><div class="dash-label">累计访问人次</div></div>
+      <div class="dash-card"><div class="dash-icon" aria-hidden="true">🔄</div><div class="dash-num">18,600+</div><div class="dash-label">资源下载总量</div></div>
+    </div>
+
+    <!-- 图表行1：饼图 + 折线图 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:28px;">
+      <div class="chart-box"><h3>资源类型分布</h3><div class="chart-container" id="chartPie" style="height:380px;"></div></div>
+      <div class="chart-box"><h3>月度上传与共享趋势</h3><div class="chart-container" id="chartLine" style="height:380px;"></div></div>
+    </div>
+
+    <!-- 图表行2：柱状图 + 排行表 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;">
+      <div class="chart-box"><h3>机构资源贡献排行</h3><div class="chart-container" id="chartBar" style="height:320px;"></div></div>
+      <div class="chart-box">
+        <h3>Top 5 机构详情</h3>
+        <table>
+          <thead><tr><th scope="col">排名</th><th scope="col">机构名称</th><th scope="col">资源总量</th><th scope="col">1级共享</th><th scope="col">2级共享</th></tr></thead>
+          <tbody id="top5Body">
+            <tr><td><span class="badge-red">1</span></td><td><strong>XX省综合档案馆</strong></td><td>42,600</td><td>18,600</td><td>24,000</td></tr>
+            <tr><td><span class="badge-blue">2</span></td><td><strong>XX市革命历史纪念馆</strong></td><td>28,900</td><td>12,300</td><td>16,600</td></tr>
+            <tr><td><span class="badge-green">3</span></td><td><strong>XX地方党史研究室</strong></td><td>16,300</td><td>8,100</td><td>8,200</td></tr>
+            <tr><td>4</td><td><strong>XX文旅红色基地</strong></td><td>12,100</td><td>6,800</td><td>5,300</td></tr>
+            <tr><td>5</td><td><strong>XX大学马克思学院</strong></td><td>9,700</td><td>7,200</td><td>2,500</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 资源详情                                                         -->
+<!-- ================================================================ -->
+<div id="resourceDetail" class="page">
+  <div class="container">
+    <div class="section-title"><h2>资源详情</h2></div>
+    <div class="resource-detail">
+      <div class="detail-main">
+        <div class="detail-cover"></div>
+        <h1 class="detail-title" id="detailTitle">建国初期地方报刊全套高清数字化档案</h1>
+        <div class="detail-meta" id="detailMeta"><span>文献档案</span><span>省档案馆提供</span><span>1949-1960年</span><span>共享等级：授权访问</span></div>
+        <div class="detail-desc" id="detailDesc">
+          <p>本资源为建国初期地方报刊全套高清数字化档案，涵盖1949年至1960年间出版的各类地方党报、机关刊物。经过多批次专业扫描归档，采用TIFF高清格式存储，支持全文检索与目录导航。</p>
+          <p><strong>资源特点：</strong></p>
+          <ul><li>收录地方党报、机关刊物共32种</li><li>合计扫描页数超过18万页</li><li>支持按时间、标题、关键词全文检索</li><li>配套目录索引，便于快速定位</li></ul>
+          <p><strong>历史背景：</strong>这些报刊记录了新中国成立初期地方政权建设、经济恢复、土地改革、抗美援朝等重要历史时期的真实面貌，是研究地方党史、新中国建设史的珍贵原始资料。</p>
+        </div>
+      </div>
+      <div class="detail-side">
+        <button class="side-btn btn-primary" onclick="openApplyModal()">申请跨机构调取</button>
+        <button class="side-btn btn-secondary" onclick="openPreviewModal()">在线预览</button>
+        <div style="margin-top:28px;"><h4 style="font-size:16px;color:var(--text);margin-bottom:16px;font-weight:bold;">资源统计</h4>
+          <div class="stat-item"><span>浏览次数</span><span id="detailViews">13,620</span></div>
+          <div class="stat-item"><span>下载次数</span><span id="detailDownloads">2,840</span></div>
+          <div class="stat-item"><span>授权机构数</span><span>36</span></div>
+          <div class="stat-item"><span>创建时间</span><span id="detailCreated">2026-03-15</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 个人中心                                                         -->
+<!-- ================================================================ -->
+<div id="userCenter" class="page">
+  <div class="container">
+    <div class="section-title"><h2>个人中心</h2><p>管理个人信息、收藏资源、下载记录</p></div>
+    <div class="profile-header">
+      <div class="profile-avatar-lg" aria-hidden="true">张</div>
+      <div class="profile-info">
+        <h3 id="profileName">张馆长</h3>
+        <p id="profileOrg">🏛️ XX省综合档案馆 · 机构管理员</p>
+        <p>📧 zhangguan@archive.org.cn · 📞 138****8000</p>
+        <div class="profile-stats">
+          <div class="pstat"><div class="num">128</div><div class="lbl">上传资源</div></div>
+          <div class="pstat"><div class="num">36</div><div class="lbl">收藏资源</div></div>
+          <div class="pstat"><div class="num">52</div><div class="lbl">下载次数</div></div>
+          <div class="pstat"><div class="num">8</div><div class="lbl">授权申请</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-item active" onclick="switchTab(this)">我的收藏</div>
+      <div class="tab-item" onclick="switchTab(this)">下载记录</div>
+      <div class="tab-item" onclick="switchTab(this)">浏览历史</div>
+    </div>
+
+    <div class="collection-grid" id="collectionGrid">
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">省档案馆</span><span class="tag-type">文献档案</span></div><h4 class="res-title">建国初期地方报刊全套高清数字化档案</h4><div class="res-footer"><span>收藏于 2026-07-15</span><span>👁️ 13,620</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">革命纪念馆</span><span class="tag-type">3D文物</span></div><h4 class="res-title">长征时期红军生活器具三维数字资产库</h4><div class="res-footer"><span>收藏于 2026-06-28</span><span>👁️ 9,270</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">党史研究室</span><span class="tag-type">口述音频</span></div><h4 class="res-title">解放战争老兵口述历史原声录音库</h4><div class="res-footer"><span>收藏于 2026-05-10</span><span>👁️ 6,840</span></div></div></div>
+      <div class="res-card" onclick="switchPage('resourceDetail')"><div class="res-img"></div><div class="res-info"><div class="res-tag-group"><span class="tag-org">高校马院</span><span class="tag-type">教研素材</span></div><h4 class="res-title">党史教学成套课件与配套题库合集</h4><div class="res-footer"><span>收藏于 2026-04-22</span><span>👁️ 27,500</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 用户登录                                                         -->
+<!-- ================================================================ -->
+<div id="userLogin" class="page">
+  <div class="container">
+    <div class="login-container">
+      <div class="login-logo"><div class="logo-icon" aria-hidden="true">红</div><h1>红脉通平台</h1><p>多机构红色数字资源协同共享平台</p></div>
+      <form class="login-form" id="loginForm" onsubmit="handleLogin(event)" novalidate>
+        <div class="form-row"><label for="loginUsername">登录账号<span style="color:var(--main-red);">*</span></label><input id="loginUsername" required placeholder="请输入用户名/手机号"><span class="field-error">请输入登录账号</span></div>
+        <div class="form-row"><label for="loginPassword">登录密码<span style="color:var(--main-red);">*</span></label><input id="loginPassword" type="password" required placeholder="请输入密码"><span class="field-error">请输入登录密码</span></div>
+        <div class="form-row"><label for="loginType">登录类型</label><select id="loginType"><option>机构管理员</option><option>机构普通用户</option><option>个人用户</option></select></div>
+        <div class="login-options"><label><input type="checkbox" style="width:15px;height:15px;"> 记住我</label><a href="#">忘记密码？</a></div>
+        <button type="submit" class="login-submit">登 录</button>
+        <div class="login-extra">还没有账号？<a href="#" data-page="orgRegister" onclick="switchPage('orgRegister')">申请机构入驻</a></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- 机构入驻                                                         -->
+<!-- ================================================================ -->
+<div id="orgRegister" class="page">
+  <div class="container">
+    <div class="section-title"><h2>机构协同入驻申请</h2><p>提交机构资质材料，申请入驻平台成为协同机构成员</p></div>
+    <form class="form-container" style="width:750px;" id="orgRegisterForm" onsubmit="handleOrgRegister(event)" novalidate>
+      <div class="form-two-col">
+        <div class="form-row"><label for="orgName">机构全称<span style="color:var(--main-red);">*</span></label><input id="orgName" required placeholder="请输入机构全称"><span class="field-error">请输入机构全称</span></div>
+        <div class="form-row"><label for="orgType">机构类型<span style="color:var(--main-red);">*</span></label><select id="orgType" required><option value="">请选择机构类型</option><option>综合档案馆</option><option>革命纪念馆</option><option>党史研究室</option><option>高校马克思主义学院</option><option>文旅红色教育基地</option></select><span class="field-error">请选择机构类型</span></div>
+      </div>
+      <div class="form-two-col">
+        <div class="form-row"><label for="creditCode">统一社会信用代码<span style="color:var(--main-red);">*</span></label><input id="creditCode" required data-type="creditCode" placeholder="请输入18位信用代码"><span class="field-error">请输入18位统一社会信用代码</span></div>
+        <div class="form-row"><label for="orgAddress">机构地址<span style="color:var(--main-red);">*</span></label><input id="orgAddress" required placeholder="请输入机构详细地址"><span class="field-error">请输入机构地址</span></div>
+      </div>
+      <div class="form-two-col">
+        <div class="form-row"><label for="contactName">对接负责人姓名<span style="color:var(--main-red);">*</span></label><input id="contactName" required placeholder="请输入负责人姓名"><span class="field-error">请输入负责人姓名</span></div>
+        <div class="form-row"><label for="contactPhone">联系电话<span style="color:var(--main-red);">*</span></label><input id="contactPhone" type="tel" required data-type="phone" placeholder="请输入11位手机号" pattern="1[3-9]\d{9}"><span class="field-error">请输入正确的11位手机号</span></div>
+      </div>
+      <div class="form-row"><label for="orgDesc">机构简介</label><textarea id="orgDesc" placeholder="简要介绍机构性质、主要职责和红色资源情况"></textarea></div>
+      <div class="form-row"><label for="applyReason">申请入驻理由</label><textarea id="applyReason" placeholder="说明申请入驻的目的和期望获得的协同权限"></textarea></div>
+      <div class="form-row"><label for="certFile">上传资质证明文件</label><input id="certFile" type="file" multiple><div class="field-hint">支持营业执照、机构代码证、授权委托书等PDF/JPG文件</div></div>
+      <button type="submit" class="submit-full">提交入驻申请，等待平台审核</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- API文档                                                          -->
+<!-- ================================================================ -->
+<div id="apiDoc" class="page">
+  <div class="container">
+    <div class="section-title"><h2>开放API接口文档</h2><p>平台提供标准化RESTful API接口，支持机构系统对接与资源双向流转</p></div>
+    <div class="api-doc-container">
+      <h3>基础信息</h3>
+      <div style="margin-bottom:32px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div><strong>接口协议：</strong>HTTP/HTTPS</div><div><strong>数据格式：</strong>JSON</div>
+          <div><strong>基地址：</strong>https://api.redmai-tong.org/v1</div><div><strong>字符编码：</strong>UTF-8</div>
+        </div>
+        <div style="background:#F8FAFC;padding:18px;border-radius:10px;">
+          <strong style="color:var(--main-red);">认证方式：</strong>机构需携带 X-App-ID 和 X-Token 请求头进行身份验证。密码使用 bcrypt/scrypt 加密存储。
+        </div>
+      </div>
+      <div class="api-group"><h4>用户认证接口</h4>
+        <div class="api-item"><div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/login</span></div><div class="api-desc">用户登录，获取登录令牌（密码使用 bcrypt 加密存储）</div><div class="api-params"><strong>参数：</strong>username, password, loginType</div></div>
+        <div class="api-item"><div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/register</span></div><div class="api-desc">用户注册</div><div class="api-params"><strong>参数：</strong>username, password, phone, role, orgId</div></div>
+      </div>
+      <div class="api-group"><h4>机构管理接口</h4>
+        <div class="api-item"><div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/org/list</span></div><div class="api-desc">获取入驻机构列表</div><div class="api-params"><strong>参数：</strong>page, size, orgType, status</div></div>
+        <div class="api-item"><div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/org/apply</span></div><div class="api-desc">机构入驻申请</div><div class="api-params"><strong>参数：</strong>orgName, orgType, creditCode, contactName, contactPhone, applyReason</div></div>
+      </div>
+      <div class="api-group"><h4>资源管理接口</h4>
+        <div class="api-item"><div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/resource/search</span></div><div class="api-desc">跨机构资源检索</div><div class="api-params"><strong>参数：</strong>keyword, orgId, resType, shareLevel, page, size</div></div>
+        <div class="api-item"><div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/resource/upload</span></div><div class="api-desc">机构资源上传</div><div class="api-params"><strong>参数：</strong>title, resType, metaDesc, shareLevel, file, coverFile</div></div>
+      </div>
+      <div class="api-group"><h4>共享授权接口</h4>
+        <div class="api-item"><div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/share/apply</span></div><div class="api-desc">提交跨机构资源调取申请</div><div class="api-params"><strong>参数：</strong>resourceId, targetOrgId, applyPurpose, useDuration</div></div>
+        <div class="api-item"><div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/share/auth/audit</span></div><div class="api-desc">审批共享申请</div><div class="api-params"><strong>参数：</strong>authId, auditResult, auditRemark</div></div>
+      </div>
+      <div class="api-group"><h4>数据统计接口</h4>
+        <div class="api-item"><div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/stats/org</span></div><div class="api-desc">获取机构协同统计数据</div><div class="api-params"><strong>参数：</strong>orgId, startDate, endDate</div></div>
+        <div class="api-item"><div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/stats/platform</span></div><div class="api-desc">获取平台整体统计数据</div><div class="api-params"><strong>参数：</strong>无</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#main-content -->
+
+<!-- ========== 弹窗1：资源调取申请 ========== -->
+<div class="modal-overlay" id="applyModal" role="dialog" aria-modal="true" aria-label="资源调取申请">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeApplyModal()" aria-label="关闭">&times;</span>
+    <h3 class="modal-title">跨机构资源调取申请</h3>
+    <form id="applyForm" onsubmit="handleApplySubmit(event)" novalidate>
+      <div class="form-row"><label for="applyResName">目标资源</label><input id="applyResName" value="建国初期地方报刊全套高清数字化档案" disabled></div>
+      <div class="form-row"><label for="applyPurpose">申请用途<span style="color:var(--main-red);">*</span></label><textarea id="applyPurpose" required placeholder="请说明资源使用目的和场景"></textarea><span class="field-error">请说明申请用途</span></div>
+      <div class="form-row"><label for="applyDuration">使用期限</label><select id="applyDuration"><option>1个月</option><option>3个月</option><option>6个月</option><option>1年</option><option>长期使用</option></select></div>
+      <div class="form-row"><label for="applyContact">联系人<span style="color:var(--main-red);">*</span></label><input id="applyContact" required placeholder="请输入联系人姓名"><span class="field-error">请输入联系人姓名</span></div>
+      <div class="form-row"><label for="applyPhone">联系电话<span style="color:var(--main-red);">*</span></label><input id="applyPhone" type="tel" required data-type="phone" placeholder="请输入联系电话" pattern="1[3-9]\d{9}"><span class="field-error">请输入正确的11位手机号</span></div>
+      <button type="submit" class="submit-full">提交申请</button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== 弹窗2：资源在线预览 ========== -->
+<div class="modal-overlay preview-modal" id="previewModal" role="dialog" aria-modal="true" aria-label="资源预览">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closePreviewModal()" aria-label="关闭">&times;</span>
+    <h3 class="modal-title">在线预览 - 建国初期地方报刊全套高清数字化档案</h3>
+    <div class="preview-body">
+      <div class="preview-doc">
+        <h4>📜 建国初期地方报刊全套高清数字化档案</h4>
+        <p>本资源为建国初期（1949-1960年）地方报刊的高清数字化档案，涵盖32种地方党报和机关刊物的完整扫描件。全部采用TIFF格式保存，分辨率达到600dpi，支持逐页查看和全文检索。</p>
+        <p style="margin-top:16px;"><strong>样本页面预览：</strong></p>
+        <div style="background:#E8EEF4;padding:40px;text-align:center;border-radius:8px;margin-top:12px;font-size:48px;">📰</div>
+        <p style="margin-top:16px;color:var(--text-light);font-size:13px;">* 完整内容需获得授权后方可查看全部18万页扫描件</p>
+      </div>
+    </div>
+    <button class="side-btn btn-primary" onclick="closePreviewModal();openApplyModal();" style="margin-top:16px;">申请完整访问授权</button>
+  </div>
+</div>
+
+<!-- ========== Footer ========== -->
+<footer>
+  <div class="foot-main">
+    <div class="foot-col"><h4>关于红脉通</h4><p>红脉通是全国首个多机构协同的红色数字资源开放共享平台，致力于打破机构间资源壁垒，实现红色文化数字化资源的互联互通与共建共享。</p><div class="foot-contact"><div>📞 联系电话：400-888-9999</div><div>📧 邮箱：contact@redmai-tong.org</div><div>📍 地址：江西省南昌市红谷滩区学府大道999号</div></div></div>
+    <div class="foot-col"><h4>平台服务</h4><ul><li><a href="#" data-page="resourceAll" onclick="switchPage('resourceAll')">全域资源检索</a></li><li><a href="#" data-page="orgRegister" onclick="switchPage('orgRegister')">机构入驻</a></li><li><a href="#" data-page="resourceUpload" onclick="switchPage('resourceUpload')">资源上传</a></li><li><a href="#" data-page="shareAuth" onclick="switchPage('shareAuth')">共享授权</a></li></ul></div>
+    <div class="foot-col"><h4>资源分类</h4><ul><li><a href="#">党史文献档案</a></li><li><a href="#">革命文物3D/图像</a></li><li><a href="#">红色影像视频</a></li><li><a href="#">口述历史音频</a></li></ul></div>
+    <div class="foot-col"><h4>帮助支持</h4><ul><li><a href="#">使用指南</a></li><li><a href="#" data-page="apiDoc" onclick="switchPage('apiDoc')">API文档</a></li><li><a href="#">常见问题</a></li><li><a href="#">反馈建议</a></li></ul></div>
+    <div class="foot-col"><h4>关于我们</h4><ul><li><a href="#">平台简介</a></li><li><a href="#">新闻动态</a></li><li><a href="#">合作伙伴</a></li><li><a href="#">联系我们</a></li></ul></div>
+  </div>
+  <div class="copyright"><p>&copy; 2026 红脉通 - 多机构红色数字资源协同共享平台 版权所有 | 京ICP备XXXXXXXX号</p></div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="返回顶部">&uarr;</button>
+
+<script src="js/api.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
